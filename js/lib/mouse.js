@@ -5,8 +5,8 @@ mouse.init = function() {
 	var gameframe = document.getElementById('gameframe');
 
 	gameframe.onmousemove = function( ev ) {
-		self.x = ev.clientX - gameframe.offsetLeft;
-		self.y = ev.clientY - gameframe.offsetTop;
+		self.x = ev.layerX;
+		self.y = ev.layerY;
 	};
 
 	gameframe.onclick = function( ev ) {
@@ -29,7 +29,6 @@ mouse.init = function() {
 		this.onmousemove( ev.changedTouches[0] );
 		this.onmousedown( ev.changedTouches[0] );
 		ev.preventDefault();
-
 	};
 
 	gameframe.ontouchmove = function( ev ) {
