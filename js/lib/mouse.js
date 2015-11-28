@@ -46,3 +46,7 @@ mouse.init = function() {
 		ev.preventDefault();
 	}
 };
+
+document.addEventListener("contextmenu", function(e){
+	e.preventDefault();
+}, false);
