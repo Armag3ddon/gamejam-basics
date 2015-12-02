@@ -10,77 +10,85 @@ function Button( img, hover, x, y, callback, sound ) {
 	this.img = new Sprite( img );
 	this.hover = new Sprite( hover );
 	this.sound = sound;
-	this.area = new Rect( new V2( x, y ), new V2( x+this.img.width, y+this.img.height ));
+	this.position = new V2(x, y);
+	this.size = new V2(this.img.width, this.img.height);
 	this.callback = callback;
 	if (x == BTN_CENTER_X)
-		x = game.display.width/2 - this.img.width/2;
-	this.x = x;
+		this.position.x = game.display.width/2 - this.img.width/2;
 	if (y == BTN_CENTER_X)
-		y = game.display.height/2 - this.img.height/2;
-	this.y = y;
+		this.position.y = game.display.height/2 - this.img.height/2;
 }
 
+Button.prototype = new Entity;
+
 Button.prototype.draw = function( ctx ) {
-	if( this.hover &&  this.area.inside( mouse )) this.hover.draw( ctx, this.x, this.y );
+	if( this.hover &&  this.getArea().inside( mouse )) this.hover.draw( ctx, this.x, this.y );
 	else this.img.draw( ctx, this.x, this.y );
 };
 
 /* Sprite button */
 
-function SpriteButton( img, position, hover, x, y, callback, sound ) {
-	this.img = g[img];
+function SpriteButton( img, position, spriteRect, hoverRect, callback, sound ) {
+	this.img = new Sprite( img );
 	this.position = position;
-	this.hover = hover;
+	this.spriteRect = spriteRect;
+	this.hoverRect = hoverRect;
 	this.sound = sound;
-	this.area = new Rect( new V2( x, y ), new V2( x+position.width(), y+position.height()));
+	this.size = new V2(this.spriteRect.width(), this.spriteRect.height());
 	this.callback = callback;
-	if (x == BTN_CENTER_X)
-		x = game.display.width/2 - this.position.width()/2;
-	this.x = x;
-	if (y == BTN_CENTER_Y)
-		y = game.display.height/2 - this.position.height()/2;
-	this.y = y;
+	if (this.position.x == BTN_CENTER_X)
+		this.position.x = game.display.width/2 - this.size.x/2;
+	if (this.position.y == BTN_CENTER_Y)
+		this.position.y = game.display.height/2 - this.size.y/2;
 }
 
+SpriteButton.prototype = new Entity();
+
 SpriteButton.prototype.draw = function( ctx ) {
-	if( this.hover &&  this.area.inside( mouse )) {
-		ctx.drawImage( this.img,
-				this.hover.p1.x, this.hover.p1.y, this.hover.width(), this.hover.height(),
-				this.x, this.y, this.hover.width(), this.hover.height());
+	if( this.hover &&  this.getArea().inside( mouse )) {
+		this.img.area( ctx,
+				this.hoverRect.p1.x, this.hoverRect.p1.y, this.hoverRect.width(), this.hoverRect.height(),
+				this.position.x, this.position.y);
 	} else {
-		ctx.drawImage( this.img,
-				this.position.p1.x, this.position.p1.y, this.position.width(), this.position.height(),
-				this.x, this.y, this.position.width(), this.position.height());
+		this.img.area( ctx,
+				this.spriteRect.p1.x, this.spriteRect.p1.y, this.spriteRect.width(), this.spriteRect.height(),
+				this.position.x, this.position.y);
 	}
 };
 
 /* Text Button */
 
-function TextButton( text, x, y, w, h, callback, colors, hover, sound ) {
-	if ( x == BTN_CENTER_X )
-		x = game.display.width/2 - w/2;
-	if ( y == BTN_CENTER_Y )
-		y = game.display.height/2 - h/2;
-	this.area = new Rect( new V2( x, y ), new V2( x+w, y+h));
+function TextButton( text, pos, size, colors, callback, hover, sound, font ) {
+	this.position = pos;
+	this.size = size;
+	if ( this.position.x == BTN_CENTER_X )
+		this.position.x = game.display.width/2 - this.size.x/2;
+	if ( this.position.y == BTN_CENTER_Y )
+		this.position.y = game.display.height/2 - this.size.y/2;
 	this.text = text;
 	this.colors = colors;
 	this.hover = hover;
 	this.sound = sound;
 	this.callback = callback;
+	this.font = font ? font : config.font;
 }
 
+TextButton.prototype = new Entity();
+
 TextButton.prototype.draw = function( ctx ) {
-	var c = this.hover &&  this.area.inside( mouse ) ? this.hover : this.colors;
-	ctx.font = config.font;
+	var c = this.hover &&  this.getArea().inside( mouse ) ? this.hover : this.colors;
 
 	ctx.fillStyle = c.background ? c.background : '#EEEEEE';
-	ctx.fillRect( this.area.p1.x, this.area.p1.y, this.area.width(), this.area.height());
+	ctx.fillRect( this.getArea().p1.x, this.getArea().p1.y, this.getArea().width(), this.getArea().height());
 
 	ctx.strokeStyle = c.border ? c.border : 'black';
-	ctx.strokeRect( this.area.p1.x, this.area.p1.y, this.area.width(), this.area.height());
+	ctx.strokeRect( this.getArea().p1.x, this.getArea().p1.y, this.getArea().width(), this.getArea().height());
 
-	ctx.fillStyle = c.text ? c.text : config.fontColor;
-	ctx.fillText( this.text, this.area.p1.x+10, this.area.p1.y+20, this.area.width());
+	ctx.fillStyle = c.text ? c.text : 'black';
+	ctx.textAlign = 'center';
+	ctx.font = this.font;
+	ctx.textBaseline = 'middle';
+	ctx.fillText( this.text, this.getArea().p1.x + this.getArea().width() / 2, this.getArea().p1.y + this.getArea().height() / 2, this.getArea().width());
 };
 
 /* Shared Source */
@@ -88,7 +96,7 @@ TextButton.prototype.draw = function( ctx ) {
 TextButton.prototype.click =
 Button.prototype.click =
 SpriteButton.prototype.click = function( pos ) {
-	if( this.area.inside( pos )) {
+	if( this.getArea().inside( pos )) {
 		if( this.sound ) sound.play(this.sound);
 		this.callback();
 	}
