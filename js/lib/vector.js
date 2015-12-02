@@ -95,7 +95,3 @@ function rad_to_vector( angle, length ) {
 function rad_to_deg( rad ) {
 		return rad * ( 180 / Math.PI );
 }
-
-function arrayRemove( arr, element ) {
-	arr.splice( arr.indexOf( element ), 1 );
-}
