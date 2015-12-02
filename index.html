@@ -20,14 +20,18 @@
 		<script type="text/javascript" src="js/lib/util.js"></script>
 		<script type="text/javascript" src="js/ui/buttons.js"></script>
 
+		<script type="text/javascript" src="js/scenes/MenuScene.js"></script>
+
 		<script type="text/javascript">
 			function init() {
-			document.body.style.backgroundColor = 'black';
+				document.body.style.backgroundColor = 'black';
+
 				g.load(function() {
 					s.load(function() {
 						mouse.init();
 						controls.init();
 						game.init();
+						game.scene = new MenuScene();
 					});
 				});
 			}
