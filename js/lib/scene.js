@@ -1,13 +1,14 @@
 function Scene() {
-	this.position = new V2(0, 0);
-	this.size = new V2(0, 0);
-	this.entities = [];
-
-	var oldDraw = this.draw;
+	// Draw background before regular drawing
+	this.oldDraw = this.draw;
 	this.draw = function(ctx ) {
 		if( this.bg )
 			this.bg.draw( ctx, 0 ,0 );
-		oldDraw( ctx );
+		else {
+			ctx.fillStyle = '#ffffff';
+			ctx.fillRect(this.position.x, this.position.y, this.size.x, this.size.y);
+		}
+		this.oldDraw( ctx );
 	};
 }
 
