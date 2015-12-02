@@ -82,7 +82,7 @@ TextButton.prototype.draw = function( ctx ) {
 	ctx.fillRect( this.getArea().p1.x, this.getArea().p1.y, this.getArea().width(), this.getArea().height());
 
 	ctx.strokeStyle = c.border ? c.border : 'black';
-	ctx.strokeRect( this.getArea().p1.x, this.getArea().p1.y, this.getArea().width(), this.getArea().height());
+	ctx.strokeRect( this.getArea().p1.x, this.getArea().p1.y, this.getArea().width()-1, this.getArea().height()-1);
 
 	ctx.fillStyle = c.text ? c.text : 'black';
 	ctx.textAlign = 'center';
