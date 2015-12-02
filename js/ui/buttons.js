@@ -1,11 +1,22 @@
+// Use to either center a button vertically or horizontally
+// Set as x or y
+
+var BTN_CENTER_X = Number.MAX_VALUE;
+var BTN_CENTER_Y = Number.MAX_VALUE;
+
 /* Image Button */
+
 function Button( img, hover, x, y, callback, sound ) {
 	this.img = new Sprite( img );
 	this.hover = new Sprite( hover );
 	this.sound = sound;
 	this.area = new Rect( new V2( x, y ), new V2( x+this.img.width, y+this.img.height ));
 	this.callback = callback;
+	if (x == BTN_CENTER_X)
+		x = game.display.width/2 - this.img.width/2;
 	this.x = x;
+	if (y == BTN_CENTER_X)
+		y = game.display.height/2 - this.img.height/2;
 	this.y = y;
 }
 
@@ -23,7 +34,11 @@ function SpriteButton( img, position, hover, x, y, callback, sound ) {
 	this.sound = sound;
 	this.area = new Rect( new V2( x, y ), new V2( x+position.width(), y+position.height()));
 	this.callback = callback;
+	if (x == BTN_CENTER_X)
+		x = game.display.width/2 - this.position.width()/2;
 	this.x = x;
+	if (y == BTN_CENTER_Y)
+		y = game.display.height/2 - this.position.height()/2;
 	this.y = y;
 }
 
@@ -42,6 +57,10 @@ SpriteButton.prototype.draw = function( ctx ) {
 /* Text Button */
 
 function TextButton( text, x, y, w, h, callback, colors, hover, sound ) {
+	if ( x == BTN_CENTER_X )
+		x = game.display.width/2 - w/2;
+	if ( y == BTN_CENTER_Y )
+		y = game.display.height/2 - h/2;
 	this.area = new Rect( new V2( x, y ), new V2( x+w, y+h));
 	this.text = text;
 	this.colors = colors;
